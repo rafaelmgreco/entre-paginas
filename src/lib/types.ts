@@ -1,0 +1,1 @@
+export type Book = { id: string; title: string; author: string; reader_name: string; cover_url: string; total_pages: number; current_page: number; status: "reading" | "finished" | "want_to_read"; created_at: string };
