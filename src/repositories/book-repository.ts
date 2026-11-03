@@ -31,7 +31,7 @@ export class BookRepository {
     if (bookError || !book) throw new Error("Livro não encontrado.");
     if (currentPage > book.total_pages) throw new Error(`Este livro tem ${book.total_pages} páginas.`);
 
-    const readerName = String(user.user_metadata?.display_name || user.email?.split("@")[0] || "Leitor").trim().slice(0, 120);
+    const readerName = String(user.user_metadata?.display_name || "Leitor").trim().slice(0, 120);
     const { error } = await supabase.from("reading_progress").upsert(
       { book_id: bookId, user_id: user.id, reader_name: readerName, current_page: currentPage },
       { onConflict: "book_id,user_id" },

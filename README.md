@@ -49,6 +49,8 @@ Não é necessário criar VM, EC2 ou servidor AWS. A Vercel hospeda o Next.js e 
 
 Pessoas autenticadas compartilham o catálogo e conseguem comparar o progresso de todos. Cada conta só cria e atualiza seu próprio progresso, protegido por RLS.
 
+Cada usuário escolhe um nome de exibição no cadastro ou no painel **Seu perfil no clube**. Alterá-lo atualiza o nome mostrado nas leituras anteriores. O nome é apenas para exibição; permissões continuam baseadas no ID autenticado da conta.
+
 ## Sessão de login
 
 O login fica salvo em cookies usados pelo SSR do Next.js, com validade de 7 dias de inatividade. O middleware renova a sessão durante o uso; clicar em **Sair** remove os cookies. O JWT continua curto e é renovado pelo Supabase. Um limite absoluto de sessão de 7 dias configurado no servidor Supabase só está disponível nos planos pagos; no Free, o prazo de 7 dias deste app é por inatividade.

@@ -3,3 +3,32 @@
 @media(max-width:900px){.shell{padding:0 25px}.book-grid{grid-template-columns:repeat(2,1fr)}.hero{min-height:360px}.hero-art{height:285px}.book-card{grid-template-columns:100px 1fr;padding:11px;gap:12px}.cover{height:145px}.progress{margin-top:15px}}
 @media(max-width:620px){.shell{padding:0 17px}.nav{height:67px}.nav-note{display:none}.hero{grid-template-columns:1fr;padding:31px 2px 22px}.hero h1{font-size:48px}.hero-art{height:240px;margin-top:10px}.sun{width:190px;height:190px}.stack-book{height:166px;width:90px}.book-b{height:188px}.stats{padding:17px 14px;margin:3px 0 42px;grid-template-columns:1fr 1fr;gap:19px}.stats strong{font-size:23px}.quote{grid-column:1/-1;border-left:0;border-top:1px solid #d6d9cf;padding:13px 0 0;font-size:14px}.book-grid{grid-template-columns:1fr 1fr;gap:10px}.book-card{display:block;padding:9px}.cover{height:190px;margin-bottom:10px}.book-info{min-height:127px}.book-info h3{font-size:13px}.page-row{font-size:8px}.percent{font-size:14px}.progress-form{padding-top:10px}.section-heading h2{font-size:27px}.add-button{font-size:0;padding:9px}.add-button svg{width:19px}.add-panel,.auth{grid-template-columns:1fr;padding:22px 17px;gap:20px}.auth{gap:12px}.auth h2{font-size:31px}.number-fields{gap:8px}footer{font-size:9px}}
 .book-card{grid-template-columns:115px minmax(0,1fr)}.cover{flex:none}.cover-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:12px;color:#fff;background:linear-gradient(145deg,#748a73,#465c51)}.cover-placeholder span{font-size:7px;letter-spacing:1.5px}.cover-placeholder strong{font:600 17px/1.15 'Playfair Display';overflow-wrap:anywhere}.cover-placeholder small{font-size:8px;opacity:.8}.book-pages{white-space:nowrap;color:var(--green);font:600 13px 'Playfair Display'}.book-pages small{font:9px 'DM Sans';color:var(--muted)}.readers-list{display:grid;gap:10px;margin-top:15px}.reader-progress{display:grid;gap:4px}.reader-label{display:flex;justify-content:space-between;gap:5px;color:#65736b;font-size:9px}.reader-label b{color:var(--green)}.reader-progress .progress{margin:0;height:4px}.reader-progress .page-row{font-size:8px}.progress-form{border-top:1px solid var(--line)}.no-progress{font-size:9px!important;color:var(--muted);margin:0}.empty-state{padding:22px;background:#eeefe8;border-radius:6px;color:var(--green);font-size:13px}.add-panel code,.cover-example code{padding:2px 4px;background:#e3e8df;border-radius:3px;color:#3e624a;font:10px Consolas,monospace}.cover-example{color:var(--muted);font-size:10px;margin-top:14px}.book-card .cover{min-height:159px}
+.profile-settings{display:grid;grid-template-columns:1fr minmax(270px,.8fr);gap:20px;align-items:center;padding:17px 23px;margin:-34px 0 50px;background:#eeefe8;border-radius:7px;position:relative}.profile-settings h2{font:600 20px 'Playfair Display';margin:5px 0}.profile-settings p{margin:0;color:var(--muted);font-size:10px}.profile-settings form{display:grid;grid-template-columns:1fr auto;align-items:end;gap:9px}.profile-settings label{display:grid;gap:5px;font-size:10px;color:#64716a}.profile-settings input{padding:9px 10px;background:var(--paper);border:1px solid #dcdfd5;border-radius:4px;font:12px 'DM Sans';outline-color:#79977d}.profile-settings .outline-button{white-space:nowrap;padding:10px 12px}.profile-error,.profile-success{position:absolute;right:24px;bottom:-18px;font-size:10px;color:#a84f42}.profile-success{color:var(--green)}.waiting-reader{font-size:9px;color:#8e755f;margin:0;padding-top:2px}
+@media(max-width:620px){.profile-settings{grid-template-columns:1fr;padding:17px;margin:-22px 0 37px;gap:13px}.profile-settings form{grid-template-columns:1fr auto}}
+
+/* Readability pass for the shared shelf cards */
+.book-card{grid-template-columns:132px minmax(0,1fr);gap:20px;padding:17px;min-height:232px}
+.book-card .cover{height:196px;min-height:196px}
+.book-info h3{font-size:18px;line-height:1.25;margin-bottom:7px}
+.book-info p{font-size:13px;line-height:1.4}
+.book-pages{font-size:16px}
+.book-pages small{font-size:11px}
+.readers-list{gap:13px;margin-top:18px}
+.reader-progress{gap:6px}
+.reader-label{font-size:13px;align-items:center}
+.reader-progress .progress{height:9px;border-radius:8px}
+.reader-progress .progress i{border-radius:8px}
+.reader-progress .page-row,.page-row{font-size:11px}
+.waiting-reader{font-size:12px;line-height:1.4;padding-top:4px}
+.no-progress{font-size:12px!important;line-height:1.4}
+.progress-form{padding-top:13px;gap:10px}
+.progress-form label{font-size:12px}
+.progress-form input{width:66px;padding:8px 7px;font-size:14px}
+.progress-form button{font-size:12px;padding:7px 2px}
+@media(max-width:900px){.book-card{grid-template-columns:124px minmax(0,1fr);gap:16px;padding:15px}.book-card .cover{height:188px;min-height:188px}.book-info h3{font-size:17px}}
+@media(max-width:620px){.book-card{display:block;padding:13px}.book-card .cover{width:100%;max-width:235px;height:250px;min-height:250px;margin:0 auto 14px}.book-info{min-height:0}.book-info h3{font-size:17px}.book-info p{font-size:12px}.readers-list{margin:14px 0}.reader-label{font-size:12px}.reader-progress .page-row,.page-row{font-size:10px}.progress-form{margin-top:12px}.progress-form label{font-size:11px}.progress-form input{width:70px}.waiting-reader{font-size:11px}}
+.progress-form{display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch;gap:7px;min-width:0}
+.progress-form label{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;white-space:normal;font-size:11px}
+.progress-form input{width:62px;flex:0 0 62px}
+.progress-form button{width:100%;min-width:0;padding:8px 10px;border:0;border-radius:4px;background:var(--green);color:#fff;text-align:center;font:600 12px 'DM Sans'}
+.book-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
