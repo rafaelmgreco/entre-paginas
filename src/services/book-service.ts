@@ -1,15 +1,30 @@
 import { BookRepository } from "@/repositories/book-repository";
+
 const repository = new BookRepository();
+
+function coverPath(title: string) {
+  const slug = title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return `/covers/${slug}.jpg`;
+}
+
 export const bookService = {
   list: () => repository.list(),
+
   async create(form: FormData) {
-    const total = Number(form.get("total_pages")); const current = Number(form.get("current_page"));
-    const title = String(form.get("title") ?? "").trim(); const author = String(form.get("author") ?? "").trim(); const reader = String(form.get("reader_name") ?? "").trim(); const cover = String(form.get("cover_url") ?? "").trim();
-    if (!title || !author || !reader || !cover || !Number.isInteger(total) || total < 1 || !Number.isInteger(current) || current < 0 || current > total) throw new Error("Confira os dados do livro e as páginas informadas.");
-    await repository.create({ title, author, reader_name: reader, cover_url: cover, total_pages: total, current_page: current });
+    const title = String(form.get("title") ?? "").trim();
+    const author = String(form.get("author") ?? "").trim();
+    const totalPages = Number(form.get("total_pages"));
+    if (!title || title.length > 180 || !author || author.length > 120 || !Number.isInteger(totalPages) || totalPages < 1) {
+      throw new Error("Informe o título, autor e um número válido de páginas.");
+    }
+    await repository.create({ title, author, total_pages: totalPages, cover_path: coverPath(title) });
   },
-  async updateProgress(id: string, page: number, total: number) {
-    if (!id || !Number.isInteger(page) || page < 0 || page > total) throw new Error("Página inválida.");
-    await repository.updateProgress(id, page, total);
+
+  async updateProgress(form: FormData) {
+    const bookId = String(form.get("book_id") ?? "");
+    const page = Number(form.get("current_page"));
+    if (!bookId || !Number.isInteger(page) || page < 0) throw new Error("Informe um número de página válido.");
+    await repository.updateProgress(bookId, page);
   },
 };

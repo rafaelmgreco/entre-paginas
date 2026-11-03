@@ -1,1 +1,18 @@
-export type Book = { id: string; title: string; author: string; reader_name: string; cover_url: string; total_pages: number; current_page: number; status: "reading" | "finished" | "want_to_read"; created_at: string };
+export type ReadingProgress = {
+  id: string;
+  book_id: string;
+  user_id: string;
+  reader_name: string;
+  current_page: number;
+  updated_at: string;
+};
+
+export type Book = {
+  id: string;
+  title: string;
+  author: string;
+  total_pages: number;
+  cover_path: string;
+  created_at: string;
+  reading_progress: ReadingProgress[];
+};
