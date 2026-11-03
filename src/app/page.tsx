@@ -1,9 +1,10 @@
 import { BookOpen, Plus, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { bookService } from "@/services/book-service";
-import { createBook, updateBookProgress } from "@/controllers/book-controller";
+import { createBook } from "@/controllers/book-controller";
 import { signIn, signUp, signOut, saveDisplayName } from "@/controllers/auth-controller";
 import { BookCover } from "@/app/book-cover";
+import { ProgressTracker } from "@/app/progress-tracker";
 import type { Book } from "@/lib/types";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ auth_error?: string; auth_message?: string; profile_error?: string; profile_message?: string }> }) {
@@ -35,7 +36,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
         const percent = (page: number) => Math.min(100, Math.round(page / book.total_pages * 100));
         return <article className="book-card" key={book.id}><BookCover title={book.title} src={book.cover_path} /><div className="book-info"><div className="title-row"><div><h3>{book.title}</h3><p>{book.author}</p></div><span className="book-pages">{book.total_pages}<small> págs.</small></span></div>
           <div className="readers-list">{book.reading_progress?.length ? book.reading_progress.map((progress) => <div className="reader-progress" key={progress.id}><div className="reader-label"><span>{progress.reader_name}</span><b>{percent(progress.current_page)}%</b></div><div className="progress"><i style={{ width: `${percent(progress.current_page)}%` }} /></div><div className="page-row"><span>página {progress.current_page} de {book.total_pages}</span>{progress.current_page >= book.total_pages && <span className="finished">✓ Finalizado</span>}</div></div>) : <p className="no-progress">Ninguém começou este livro ainda.</p>}{user && !book.reading_progress?.some((progress) => progress.user_id !== user.id) && <p className="waiting-reader">A outra pessoa ainda não registrou o progresso deste livro.</p>}</div>
-          {user && <form action={updateBookProgress} className="progress-form"><input type="hidden" name="book_id" value={book.id} /><label>Sua página <input type="number" name="current_page" min="0" max={book.total_pages} defaultValue={myProgress?.current_page ?? 0} required /></label><button>{myProgress ? "Atualizar" : "Registrar"}</button></form>}
+          {user && <ProgressTracker bookId={book.id} totalPages={book.total_pages} currentPage={myProgress?.current_page ?? 0} />}
         </div></article>;
       })}</div>
       {user && <div className="add-panel" id="adicionar"><div><span className="eyebrow">MAIS UMA HISTÓRIA</span><h2>Adicionar à estante</h2><p>Informe o título, autor e total de páginas. Depois, coloque a capa em <code>public/covers</code> usando o nome sugerido.</p><div className="cover-example">Exemplo: “Caminho dos Reis” → <code>public/covers/caminho-dos-reis.jpg</code></div></div><form action={createBook} className="add-form"><label>Título<input name="title" placeholder="Ex.: O conto da aia" required maxLength={180} /></label><label>Autor<input name="author" placeholder="Nome de quem escreveu" required maxLength={120} /></label><label>Total de páginas<input name="total_pages" type="number" min="1" placeholder="Ex.: 432" required /></label><button className="submit-button">Salvar livro <span>→</span></button></form></div>}

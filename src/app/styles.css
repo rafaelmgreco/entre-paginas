@@ -32,3 +32,18 @@
 .progress-form input{width:62px;flex:0 0 62px}
 .progress-form button{width:100%;min-width:0;padding:8px 10px;border:0;border-radius:4px;background:var(--green);color:#fff;text-align:center;font:600 12px 'DM Sans'}
 .book-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.progress-error{grid-column:1/-1;margin:0;color:#a84f42;font-size:11px;line-height:1.4}
+.celebration-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;overflow:hidden;background:rgba(22,38,31,.82);backdrop-filter:blur(4px);cursor:crosshair;animation:celebration-in .28s ease-out both}
+.firework-field{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.firework-burst{position:absolute;width:0;height:0}
+.firework-spark{position:absolute;left:0;top:0;width:6px;height:6px;border-radius:50%;background:var(--spark-color);box-shadow:0 0 12px 3px var(--spark-color);opacity:0;animation:firework-burst 1.25s cubic-bezier(.12,.72,.22,1) var(--spark-delay) both}
+.celebration-card{position:relative;z-index:1;width:min(440px,calc(100vw - 36px));padding:34px 28px;text-align:center;border:1px solid #ffffff70;border-radius:16px;background:#fffefa;box-shadow:0 24px 80px #0005;cursor:default;animation:celebration-card-in .5s cubic-bezier(.18,.85,.25,1.2) both}
+.celebration-kicker{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--green)}
+.celebration-card h2{margin:10px 0;font:600 clamp(29px,7vw,40px)/1.08 'Playfair Display',serif;color:var(--ink)}
+.celebration-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.celebration-card .celebration-hint{margin-top:15px;font-size:12px;color:var(--green)}
+.celebration-card button{margin-top:22px;border:0;border-radius:5px;padding:12px 18px;background:var(--green);color:white;font:600 13px 'DM Sans';cursor:pointer}
+@keyframes firework-burst{0%{opacity:1;transform:rotate(var(--angle)) translateY(0) scale(1)}72%{opacity:1}100%{opacity:0;transform:rotate(var(--angle)) translateY(var(--travel)) scale(.12)}}
+@keyframes celebration-in{from{opacity:0}to{opacity:1}}
+@keyframes celebration-card-in{from{opacity:0;transform:translateY(18px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.celebration-overlay,.celebration-card{animation-duration:.01ms}.firework-spark{animation-duration:.5s}}

@@ -21,7 +21,7 @@ export class BookRepository {
     if (error) throw new Error(error.message);
   }
 
-  async updateProgress(bookId: string, currentPage: number) {
+  async updateProgress(bookId: string, currentPage: number): Promise<boolean> {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Entre na sua conta para atualizar seu progresso.");
@@ -31,11 +31,16 @@ export class BookRepository {
     if (bookError || !book) throw new Error("Livro não encontrado.");
     if (currentPage > book.total_pages) throw new Error(`Este livro tem ${book.total_pages} páginas.`);
 
+    const { data: previousProgress, error: progressReadError } = await supabase
+      .from("reading_progress").select("current_page").eq("book_id", bookId).eq("user_id", user.id).maybeSingle();
+    if (progressReadError) throw new Error(progressReadError.message);
+
     const readerName = String(user.user_metadata?.display_name || "Leitor").trim().slice(0, 120);
     const { error } = await supabase.from("reading_progress").upsert(
       { book_id: bookId, user_id: user.id, reader_name: readerName, current_page: currentPage },
       { onConflict: "book_id,user_id" },
     );
     if (error) throw new Error(error.message);
+    return currentPage >= book.total_pages && (previousProgress?.current_page ?? 0) < book.total_pages;
   }
 }

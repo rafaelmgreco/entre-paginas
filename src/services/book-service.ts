@@ -21,10 +21,10 @@ export const bookService = {
     await repository.create({ title, author, total_pages: totalPages, cover_path: coverPath(title) });
   },
 
-  async updateProgress(form: FormData) {
+  async updateProgress(form: FormData): Promise<boolean> {
     const bookId = String(form.get("book_id") ?? "");
     const page = Number(form.get("current_page"));
     if (!bookId || !Number.isInteger(page) || page < 0) throw new Error("Informe um número de página válido.");
-    await repository.updateProgress(bookId, page);
+    return repository.updateProgress(bookId, page);
   },
 };
