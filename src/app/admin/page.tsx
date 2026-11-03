@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { AdminPanel } from "@/app/admin-panel";
 import { NavigationMenu } from "@/app/navigation-menu";
@@ -23,8 +24,8 @@ export default async function AdminPage() {
   }
 
   return <main className="shell admin-page">
-    <nav className="nav"><a className="brand" href="/"><span className="brand-icon"><BookOpen size={19} /></span>entre<span>páginas</span></a><div className="nav-right"><span className="nav-note">um clube, muitas histórias</span><NavigationMenu isAdmin /><form action={signOut}><button className="text-button">Sair</button></form></div></nav>
-    <header className="admin-page-heading"><a href="/#estante">← Voltar para a estante</a><h1>Administração</h1><p>Gerencie as pessoas cadastradas e os livros compartilhados.</p></header>
+    <nav className="nav"><Link className="brand" href="/"><span className="brand-icon"><BookOpen size={19} /></span>entre<span>páginas</span></Link><div className="nav-right"><span className="nav-note">um clube, muitas histórias</span><NavigationMenu isAdmin /><form action={signOut}><button className="text-button">Sair</button></form></div></nav>
+    <header className="admin-page-heading"><Link href="/#estante">← Voltar para a estante</Link><h1>Administração</h1><p>Gerencie as pessoas cadastradas e os livros compartilhados.</p></header>
     {loadError ? <div className="empty-state">Para ativar os dados administrativos, execute <code>supabase/admin_access.sql</code> no SQL Editor do Supabase e atualize a página.</div> : <AdminPanel profiles={profiles} books={books} />}
   </main>;
 }

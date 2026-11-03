@@ -1,4 +1,5 @@
 import { BookOpen, Plus, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { bookService } from "@/services/book-service";
 import { signIn, signUp, signOut, saveDisplayName, saveReaderColor } from "@/controllers/auth-controller";
@@ -55,7 +56,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
       {user && <div className="add-panel" id="adicionar"><div><span className="eyebrow">MAIS UMA HISTÓRIA</span><h2>Adicionar à estante</h2><p>Informe o título, autor, total de páginas e envie uma imagem da capa. Ela ficará salva no Supabase.</p><div className="cover-example">A imagem precisa ser JPG, PNG ou WebP e ter até 2 MB.</div></div><CreateBookForm /></div>}
     </section>
     {!user && <section className="auth" id="entrar"><div><span className="eyebrow">SEU ESPAÇO DE LEITURA</span><h2>Entre para guardar<br />seu progresso.</h2><p>Crie sua conta gratuita ou acesse sua estante.</p></div><div className="auth-box">{params.auth_error && <p className="auth-message error">{params.auth_error}</p>}{params.auth_message && <p className="auth-message">{params.auth_message}</p>}<form action={signIn}><strong>Já tem uma conta?</strong><label>E-mail<input name="email" type="email" required placeholder="voce@email.com" /></label><label>Senha<input name="password" type="password" minLength={6} required placeholder="Mínimo 6 caracteres" /></label><button className="submit-button">Entrar <span>→</span></button></form><div className="auth-divider">ou crie sua conta</div><form action={signUp}><label>Como quer ser chamado?<input name="display_name" type="text" minLength={2} maxLength={40} required placeholder="Ex.: Rafa" /></label><label>E-mail<input name="email" type="email" required placeholder="voce@email.com" /></label><label>Senha<input name="password" type="password" minLength={6} required placeholder="Mínimo 6 caracteres" /></label><button className="outline-button">Criar conta gratuita</button></form></div></section>}
-    {user && <section className="personal-collection-promo"><div><span className="eyebrow">SUA ESTANTE PARTICULAR</span><h2>Uma coleção só sua</h2><p>Guarde também os livros que não estão na estante compartilhada.</p></div><a href="/minha-colecao#adicionar-pessoal"><Plus size={17} /> Adicionar à minha coleção</a></section>}
+    {user && <section className="personal-collection-promo"><div><span className="eyebrow">SUA ESTANTE PARTICULAR</span><h2>Uma coleção só sua</h2><p>Guarde também os livros que não estão na estante compartilhada.</p></div><Link href="/minha-colecao#adicionar-pessoal"><Plus size={17} /> Adicionar à minha coleção</Link></section>}
     <footer><a className="brand" href="#top"><span className="brand-icon"><BookOpen size={16} /></span>entre<span>páginas</span></a><span>Feito para quem lê junto. ♡</span></footer>
   </main>;
 }
