@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties, type Mous
 type Burst = { id: number; x: number; y: number; palette: number };
 const palettes = ["#ffd166", "#ff6b6b", "#7bdff2", "#cdb4db", "#95d5b2"];
 
-export function FireworksCelebration({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function FireworksCelebration({ open, onClose, buttonLabel = "Voltar à estante" }: { open: boolean; onClose: () => void; buttonLabel?: string }) {
   const [bursts, setBursts] = useState<Burst[]>([]);
   const nextId = useRef(0);
   const launch = useCallback((x: number, y: number) => {
@@ -43,7 +43,7 @@ export function FireworksCelebration({ open, onClose }: { open: boolean; onClose
       <h2 id="celebration-title">Livro concluído!</h2>
       <p>Mais uma história guardada com carinho.</p>
       <p className="celebration-hint">Clique em qualquer lugar para soltar mais fogos ✨</p>
-      <button type="button" onClick={onClose}>Voltar à estante</button>
+      <button type="button" onClick={onClose}>{buttonLabel}</button>
     </section>
   </div>;
 }

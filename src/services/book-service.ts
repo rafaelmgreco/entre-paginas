@@ -1,15 +1,23 @@
 import { BookRepository } from "@/repositories/book-repository";
+import { DEFAULT_PROGRESS_COLOR, profileService } from "@/services/profile-service";
+import { validateCoverFile } from "@/services/cover-service";
 
 const repository = new BookRepository();
 
-function coverPath(title: string) {
-  const slug = title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  return `/covers/${slug}.jpg`;
-}
-
 export const bookService = {
-  list: () => repository.list(),
+  async list() {
+    const [books, colors] = await Promise.all([
+      repository.list(),
+      profileService.listReaderColors().catch(() => new Map<string, string>()),
+    ]);
+    return books.map((book) => ({
+      ...book,
+      reading_progress: (book.reading_progress ?? []).map((progress) => ({
+        ...progress,
+        progress_color: colors.get(progress.user_id) ?? DEFAULT_PROGRESS_COLOR,
+      })),
+    }));
+  },
 
   async create(form: FormData) {
     const title = String(form.get("title") ?? "").trim();
@@ -18,7 +26,9 @@ export const bookService = {
     if (!title || title.length > 180 || !author || author.length > 120 || !Number.isInteger(totalPages) || totalPages < 1) {
       throw new Error("Informe o título, autor e um número válido de páginas.");
     }
-    await repository.create({ title, author, total_pages: totalPages, cover_path: coverPath(title) });
+    const cover = await validateCoverFile(form.get("cover"));
+    if (!cover) throw new Error("Escolha uma imagem de capa.");
+    await repository.createWithCover({ title, author, total_pages: totalPages }, cover);
   },
 
   async updateProgress(form: FormData): Promise<boolean> {

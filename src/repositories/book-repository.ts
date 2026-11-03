@@ -1,5 +1,6 @@
 import type { Book } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
+import { randomUUID } from "node:crypto";
 
 export class BookRepository {
   async list(): Promise<Book[]> {
@@ -12,13 +13,30 @@ export class BookRepository {
     return (data ?? []) as Book[];
   }
 
-  async create(input: Pick<Book, "title" | "author" | "total_pages" | "cover_path">) {
+  async createWithCover(input: Pick<Book, "title" | "author" | "total_pages">, cover: File) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Entre na sua conta para cadastrar um livro.");
-    const { error } = await supabase.from("books").insert({ ...input, created_by: user.id });
-    if (error?.code === "23505") throw new Error("Esse livro já está cadastrado na estante.");
-    if (error) throw new Error(error.message);
+
+    const extension = cover.type === "image/jpeg" ? "jpg" : cover.type === "image/png" ? "png" : "webp";
+    const coverPath = `${randomUUID()}.${extension}`;
+    const { error: uploadError } = await supabase.storage.from("book-covers").upload(coverPath, cover, {
+      contentType: cover.type,
+      cacheControl: "31536000",
+      upsert: false,
+    });
+    if (uploadError) throw new Error(uploadError.message);
+
+    const { error: insertError } = await supabase.from("books").insert({
+      ...input,
+      cover_path: coverPath,
+      created_by: user.id,
+    });
+    if (insertError) {
+      await supabase.storage.from("book-covers").remove([coverPath]);
+      if (insertError.code === "23505") throw new Error("Esse livro já está cadastrado na estante.");
+      throw new Error(`A imagem foi enviada, mas não foi possível cadastrar o livro: ${insertError.message}`);
+    }
   }
 
   async updateProgress(bookId: string, currentPage: number): Promise<boolean> {

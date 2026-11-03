@@ -1,6 +1,6 @@
 # Entre Páginas
 
-Estante de leitura compartilhada feita com Next.js App Router, TypeScript, Supabase e Vercel. O catálogo de livros fica no Supabase; cada conta registra o próprio progresso. As capas são arquivos estáticos no repositório em `public/covers`, sem Storage ou S3.
+Estante de leitura compartilhada feita com Next.js App Router, TypeScript, Supabase e Vercel. O catálogo de livros fica no Supabase; cada conta registra o próprio progresso. As capas existentes em `public/covers` continuam funcionando, e os novos cadastros podem enviar imagens para o Supabase Storage.
 
 ## Rodar localmente
 
@@ -15,19 +15,39 @@ Se o banco ainda está vazio, abra **SQL Editor → New query**, execute [`supab
 
 Se você já executou o schema antigo, rode em vez disso [`supabase/upgrade_old_books_schema.sql`](./supabase/upgrade_old_books_schema.sql). Ele preserva os registros antigos em `books_legacy_20261103`, cria o catálogo novo e mantém eventuais progressos que já existirem.
 
+Para bancos configurados antes das preferências de cor, execute também [`supabase/reader_preferences.sql`](./supabase/reader_preferences.sql) no SQL Editor. Ele cria as preferências RGB dos leitores, prepara as contas existentes e aplica RLS para cada pessoa só alterar a própria cor.
+
+Para habilitar a coleção individual, execute [`supabase/personal_books.sql`](./supabase/personal_books.sql) no SQL Editor depois do schema do catálogo. A tabela usa RLS por `user_id`; cada conta consegue listar, cadastrar, atualizar e apagar apenas os próprios livros. Se o bucket `book-covers` já está configurado, o script também atualiza a política para permitir que cada pessoa remova capas sem uso da própria coleção. A opção **Minha coleção** aparece no menu de usuários autenticados e há também um atalho no fim da página inicial.
+
+Depois da migração, cada pessoa pode escolher a cor da própria barra junto ao campo de nome no painel **Seu perfil no clube**. A cor é salva como `rgb(r, g, b)` no banco e aparece para todas as pessoas da estante.
+
 Depois, em **Project Settings → API → Exposed schemas** (o nome pode aparecer em **Integrations → Data API**), confira se `public` está exposto à Data API. Projetos recentes podem exigir essa ativação explícita. O SQL já concede às contas autenticadas as permissões necessárias e liga políticas RLS nas duas tabelas.
 
-## Capas manuais
+### Ativar a administração
 
-Ao cadastrar um livro, o site cria o caminho a partir do título: letras minúsculas, sem acentos e espaços trocados por hífens. Salve o arquivo `.jpg` com esse nome dentro de `public/covers` e inclua-o no commit.
+Para habilitar o painel administrativo em um banco que já está em uso:
 
-Exemplos:
+1. No Supabase, abra **SQL Editor → New query**.
+2. Copie o conteúdo de [`supabase/admin_access.sql`](./supabase/admin_access.sql) e execute.
+3. Entre novamente no site com `rafaelmgreco@hotmail.com`.
 
-- Alchemised → `public/covers/alchemised.jpg`
-- Caminho dos Reis → `public/covers/caminho-dos-reis.jpg`
-- O conto da aia → `public/covers/o-conto-da-aia.jpg`
+O script cria e preenche `public.profiles` a partir das contas existentes no Supabase Auth, e mantém os perfis sincronizados para novos cadastros. O painel permite consultar as contas, corrigir o total de páginas e remover livros. Ao remover, os progressos daquele livro também são apagados. Ao reduzir o total de páginas, os progressos acima do novo limite são ajustados.
 
-Enquanto a imagem não estiver na pasta, a estante mostra uma capa provisória com o título. Não envie imagens para o banco, Supabase Storage ou S3.
+O administrador é definido pelo e-mail autenticado `rafaelmgreco@hotmail.com`, validado tanto nas ações do servidor quanto nas políticas RLS do banco. Não é usado o nome ou metadado editável do perfil para conceder acesso. O arquivo de migração deve ser executado uma vez no projeto Supabase.
+
+## Capas dos livros
+
+As capas atuais que já estão em `public/covers` continuam sendo servidas junto com o projeto. Para livros cadastrados pelo site, a pessoa envia a imagem no próprio formulário, sem editar o repositório ou fazer deploy.
+
+### Configurar envio pelo Supabase Storage
+
+O formulário de cadastro também aceita capas enviadas por qualquer conta autenticada. Para habilitar:
+
+1. No Supabase, abra **Storage → New bucket** e crie o bucket `book-covers` como **Public**.
+2. Nas restrições do bucket, permita somente `image/jpeg`, `image/png` e `image/webp`, com limite de **2 MB** por arquivo.
+3. Abra **SQL Editor → New query**, execute [`supabase/book_covers_storage.sql`](./supabase/book_covers_storage.sql).
+
+O app valida os bytes do arquivo no servidor e só aceita JPG/JPEG, PNG e WebP até 2 MB. O Server Action recebe até 3 MB para acomodar a imagem e os dados do formulário. A capa é enviada com nome aleatório ao Storage e seu caminho fica no cadastro do livro. Ao remover um livro pelo painel admin, o app também remove a capa do bucket. O bucket é público para leitura das imagens; o envio exige login e a exclusão é restrita ao admin. No plano Free, o Storage tem 1 GB de espaço e 5 GB de egress, compartilhados pela organização; acompanhe o consumo em **Project → Usage**.
 
 ## Publicar na Vercel
 
@@ -42,10 +62,15 @@ Não é necessário criar VM, EC2 ou servidor AWS. A Vercel hospeda o Next.js e 
 - `src/controllers`: Server Actions.
 - `src/services`: validação, geração de nome de capa e regras de páginas.
 - `src/repositories`: acesso às tabelas `books` e `reading_progress`.
+- `src/controllers`, `src/services` e `src/repositories`: ações e acesso da administração.
 - `src/lib/supabase`: cliente server-side com cookies para Auth.
 - `src/middleware.ts`: atualiza a sessão Supabase no Next.js 15.
 - `supabase/schema.sql`: instalação limpa do banco.
 - `supabase/upgrade_old_books_schema.sql`: script manual para atualizar o schema antigo pelo SQL Editor.
+- `supabase/admin_access.sql`: perfis sincronizados com Auth e permissões administrativas para banco existente.
+- `supabase/book_covers_storage.sql`: políticas RLS do bucket público de capas.
+- `supabase/reader_preferences.sql`: preferência RGB por pessoa, com RLS individual.
+- `supabase/personal_books.sql`: coleção privada de livros com RLS por usuário.
 
 Pessoas autenticadas compartilham o catálogo e conseguem comparar o progresso de todos. Cada conta só cria e atualiza seu próprio progresso, protegido por RLS.
 

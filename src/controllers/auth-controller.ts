@@ -29,3 +29,14 @@ export async function saveDisplayName(form: FormData) {
   revalidatePath("/");
   redirect("/?profile_message=Nome+atualizado#perfil");
 }
+
+export async function saveReaderColor(form: FormData) {
+  try {
+    await profileService.updateReaderColor(form);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Não foi possível salvar a cor.";
+    redirect(`/?color_error=${encodeURIComponent(message)}#perfil`);
+  }
+  revalidatePath("/");
+  redirect("/?color_message=Cor+da+barra+atualizada#perfil");
+}
